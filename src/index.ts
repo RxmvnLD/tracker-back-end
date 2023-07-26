@@ -1,11 +1,10 @@
-import express from "express";
+import app from "./app";
+import connectDB from "./db";
 
-const app = express();
+const PORT = process.env.PORT;
 
-app.use(express.json());
-
-const PORT = 8080;
+connectDB();
 
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+    console.log(`Server running on port ${PORT}`);
 });
