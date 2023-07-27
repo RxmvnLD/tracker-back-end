@@ -1,17 +1,7 @@
 import { Schema, model, models } from "mongoose";
-import { BankAccType } from "../../types";
+import { IBankAccount, IBankAccountModel } from "../../interfaces/IBankAccount";
 
-export interface IBankAccount {
-    name: string;
-    type: BankAccType;
-    balance: number;
-    cuttOffDate: Date;
-    paydayLimit: Date;
-    color: string;
-    transactions: Schema.Types.ObjectId[];
-}
-
-const bankAccountSchema = new Schema(
+const bankAccountSchema: Schema<IBankAccount> = new Schema(
     {
         name: {
             type: String,
@@ -75,5 +65,7 @@ bankAccountSchema.set("toJSON", {
     },
 });
 
-export default models.BankAccount ||
-    model<IBankAccount>("BankAccount", bankAccountSchema);
+export default model<IBankAccount, IBankAccountModel>(
+    "BankAccount",
+    bankAccountSchema,
+);
