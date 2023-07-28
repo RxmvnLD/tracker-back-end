@@ -24,8 +24,8 @@ const updateUser = async (id: string, newData: newUserDataInterface) => {
 };
 
 const deleteUser = async (id: String) => {
-    const users = await User.findByIdAndDelete(id);
-    return users;
+    await User.findByIdAndDelete(id);
+    return;
 };
 
 const userService = { getUser, getUsers, updateUser, deleteUser };
