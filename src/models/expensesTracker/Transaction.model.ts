@@ -1,13 +1,7 @@
-import { Schema, model, models } from "mongoose";
-import { TransactionType } from "../../types";
+import { Schema, model } from "mongoose";
+import { ITransaction, ITransactionModel } from "../../interfaces/ITransaction";
 
-export interface ITransaction {
-    name: string;
-    type: TransactionType;
-    amount: number;
-}
-
-const transactionSchema = new Schema(
+const transactionSchema: Schema<ITransaction> = new Schema(
     {
         name: {
             type: String,
@@ -38,5 +32,7 @@ transactionSchema.set("toJSON", {
     },
 });
 
-export default models.Transaction ||
-    model<ITransaction>("Transaction", transactionSchema);
+export default model<ITransaction, ITransactionModel>(
+    "Transaction",
+    transactionSchema,
+);

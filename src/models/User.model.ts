@@ -1,16 +1,7 @@
-import { Schema, model, models } from "mongoose";
+import { Schema, model } from "mongoose";
+import { IUser, IUserModel } from "../interfaces/IUser";
 
-export interface IUser {
-    username: string;
-    email: string;
-    password: string;
-    bankAccounts: Schema.Types.ObjectId[];
-    betsStatus: {
-        bets: Schema.Types.ObjectId[];
-    };
-}
-
-const userSchema: Schema = new Schema(
+const userSchema: Schema<IUser> = new Schema(
     {
         username: {
             type: String,
@@ -72,4 +63,4 @@ userSchema.set("toJSON", {
     },
 });
 
-export default models.User || model<IUser>("User", userSchema);
+export default model<IUser, IUserModel>("User", userSchema);

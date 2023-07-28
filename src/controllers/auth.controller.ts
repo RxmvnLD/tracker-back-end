@@ -3,19 +3,28 @@ import User from "../models/User.model";
 import { MongoServerError } from "mongodb";
 import { hash, compare } from "bcryptjs";
 import createToken from "../libs/jwt";
+import Joi from "joi";
 export const login = async (req: Request, res: Response) => {
     const { email, password } = req.body;
     //Validate fields
-    if (!email || !password)
-        return res
-            .status(422)
-            .json({ message: "Please. Send your email and password" });
+    try {
+        const schema = Joi.object({
+            email: Joi.string().email().required(),
+            password: Joi.string().required(),
+        });
+        await schema.validateAsync(req.body, { warnings: true });
+    } catch (error: any) {
+        const errorMsj = error.details[0].message;
+        return res.status(400).json({ message: errorMsj });
+    }
 
     try {
         //Search for an existing user
         const existingUser = await User.findOne({ email });
         if (!existingUser)
-            return res.status(404).json({ message: "User not found" });
+            return res
+                .status(404)
+                .json({ message: "User not found, check your email" });
 
         //Validate password
         const validPassword = await compare(password, existingUser.password);
@@ -47,13 +56,25 @@ export const login = async (req: Request, res: Response) => {
 };
 
 export const signup = async (req: Request, res: Response) => {
-    const { username, email, password } = req.body;
+    const { username, email, password, confirmPassword } = req.body;
 
     //Validate fields
-    if (!email || !password)
+    if (!confirmPassword)
         return res
             .status(422)
-            .json({ message: "Please. Send your email and password" });
+            .json({ message: "Please send the password confirmation." });
+    try {
+        const schema = Joi.object({
+            username: Joi.string().min(3).max(30).required(),
+            email: Joi.string().email().required(),
+            password: Joi.string().min(6).max(30).required(),
+            confirmPassword: Joi.ref("password"),
+        });
+        await schema.validateAsync(req.body, { warnings: true });
+    } catch (error: any) {
+        const errorMsj = error.details[0].message;
+        return res.status(400).json({ message: errorMsj });
+    }
 
     try {
         //Create a new user and encrypt the password
