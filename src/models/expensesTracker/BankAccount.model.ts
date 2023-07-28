@@ -1,4 +1,4 @@
-import { Schema, model, models } from "mongoose";
+import { Schema, model } from "mongoose";
 import { IBankAccount, IBankAccountModel } from "../../interfaces/IBankAccount";
 
 const bankAccountSchema: Schema<IBankAccount> = new Schema(
@@ -13,15 +13,15 @@ const bankAccountSchema: Schema<IBankAccount> = new Schema(
         },
         balance: {
             type: Number,
-            required: true,
         },
-        cuttOffDate: {
+        credit: {
+            type: Number,
+        },
+        cuttOffDay: {
             type: Date,
-            required: true,
         },
         paydayLimit: {
             type: Date,
-            required: true,
         },
         color: {
             type: String,
@@ -46,12 +46,22 @@ const bankAccountSchema: Schema<IBankAccount> = new Schema(
             ref: "User",
         },
         transactions: {
-            type: [
-                {
-                    type: Schema.Types.ObjectId,
-                    ref: "Transaction",
-                },
-            ],
+            incomes: {
+                type: [
+                    {
+                        type: Schema.Types.ObjectId,
+                        ref: "Transaction",
+                    },
+                ],
+            },
+            expenses: {
+                type: [
+                    {
+                        type: Schema.Types.ObjectId,
+                        ref: "Transaction",
+                    },
+                ],
+            },
         },
     },
     { timestamps: true },

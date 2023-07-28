@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import userService from "../services/user.services";
-import Joi from "joi";
+import { updateUserSchema } from "../utils/validations/userValidations";
 
 export const getUser = async (req: Request, res: Response) => {
     try {
@@ -25,12 +25,7 @@ export const getUsers = async (_req: Request, res: Response) => {
 export const updateUser = async (req: Request, res: Response) => {
     //Validate data
     try {
-        const schema = Joi.object({
-            username: Joi.string().min(3).max(30),
-            email: Joi.string().email(),
-            password: Joi.string().min(6).max(30),
-        });
-        await schema.validateAsync(req.body, { warnings: true });
+        await updateUserSchema.validateAsync(req.body);
     } catch (error: any) {
         const errorMsj = error.details[0].message;
         return res.status(400).json({ message: errorMsj });
