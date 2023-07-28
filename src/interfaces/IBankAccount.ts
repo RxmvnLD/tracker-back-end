@@ -7,7 +7,8 @@ export interface IBankAccount extends Document {
     //Only for debit card
     balance?: number;
     //Only for credit card
-    credit?: number;
+    totalCredit?: number;
+    availableCredit?: number;
     cuttOffDay?: Date;
     paydayLimit?: Date;
     //

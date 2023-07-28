@@ -14,7 +14,10 @@ const bankAccountSchema: Schema<IBankAccount> = new Schema(
         balance: {
             type: Number,
         },
-        credit: {
+        totalCredit: {
+            type: Number,
+        },
+        availableCredit: {
             type: Number,
         },
         cuttOffDay: {

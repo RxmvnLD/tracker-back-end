@@ -78,6 +78,9 @@ export const signup = async (req: Request, res: Response) => {
         });
         //Save user in the database
         const savedUser = await newUser.save();
+        if (!savedUser) {
+            return res.status(404).json({ message: "ERROR CREATING USER" });
+        }
         //Create token
         const token = await createToken({ id: savedUser._id });
         //Save token as a cookie

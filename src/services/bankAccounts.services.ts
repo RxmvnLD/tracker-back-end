@@ -24,7 +24,8 @@ interface updatedBankAccInterface {
     name?: string;
     type?: BankAccType;
     balance?: number;
-    credit?: number;
+    totalCredit?: number;
+    availableCredit?: number;
     cuttOffDay?: Date;
     paydayLimit?: Date;
     color?: string;

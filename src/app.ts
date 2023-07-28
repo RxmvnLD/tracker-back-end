@@ -4,6 +4,7 @@ import morgan from "morgan";
 import authRoutes from "./routes/auth.routes";
 import userRoutes from "./routes/user.routes";
 import bankAccountRoutes from "./routes/bankAccounts.routes";
+import transactionRoutes from "./routes/transactions.routes";
 
 dotenv.config();
 
@@ -19,5 +20,6 @@ app.use(morgan("dev"));
 app.use("/api", authRoutes);
 app.use("/api", userRoutes);
 app.use("/api", bankAccountRoutes);
+app.use("/api", transactionRoutes);
 
 export default app;
