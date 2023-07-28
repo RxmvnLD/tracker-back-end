@@ -3,16 +3,15 @@ import User from "../models/User.model";
 import { MongoServerError } from "mongodb";
 import { hash, compare } from "bcryptjs";
 import createToken from "../libs/jwt";
-import Joi from "joi";
+import {
+    loginSchema,
+    signupSchema,
+} from "../utils/validations/authValidations";
 export const login = async (req: Request, res: Response) => {
     const { email, password } = req.body;
     //Validate fields
     try {
-        const schema = Joi.object({
-            email: Joi.string().email().required(),
-            password: Joi.string().required(),
-        });
-        await schema.validateAsync(req.body, { warnings: true });
+        await loginSchema.validateAsync(req.body, { warnings: true });
     } catch (error: any) {
         const errorMsj = error.details[0].message;
         return res.status(400).json({ message: errorMsj });
@@ -64,13 +63,7 @@ export const signup = async (req: Request, res: Response) => {
             .status(422)
             .json({ message: "Please send the password confirmation." });
     try {
-        const schema = Joi.object({
-            username: Joi.string().min(3).max(30).required(),
-            email: Joi.string().email().required(),
-            password: Joi.string().min(6).max(30).required(),
-            confirmPassword: Joi.ref("password"),
-        });
-        await schema.validateAsync(req.body, { warnings: true });
+        await signupSchema.validateAsync(req.body, { warnings: true });
     } catch (error: any) {
         const errorMsj = error.details[0].message;
         return res.status(400).json({ message: errorMsj });

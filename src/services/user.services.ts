@@ -1,4 +1,5 @@
 import User from "../models/User.model";
+import { hash } from "bcryptjs";
 const getUser = async (id: String) => {
     const user = await User.findById(id);
     return user;
@@ -16,6 +17,15 @@ interface newUserDataInterface {
 }
 
 const updateUser = async (id: string, newData: newUserDataInterface) => {
+    if (newData.password) {
+        const newHashedPass = await hash(newData.password, 12);
+        newData.password = newHashedPass;
+        let user = await User.findByIdAndUpdate(id, newData, {
+            new: true,
+        });
+        if (!user) throw new Error("User not found");
+        return user;
+    }
     let user = await User.findByIdAndUpdate(id, newData, {
         new: true,
     });
