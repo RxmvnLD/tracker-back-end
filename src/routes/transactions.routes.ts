@@ -10,7 +10,7 @@ import {
 const router = Router();
 
 router.post("/transactions", createTransaction);
-router.get("/transactions", getTransactions);
+router.get("/transactions/all", getTransactions);
 router.get("/transactions/:id", getTransaction);
 router.put("/transactions/:id", updateTransaction);
 router.delete("/transactions/:id", deleteTransaction);

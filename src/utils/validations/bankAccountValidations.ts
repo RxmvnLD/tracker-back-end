@@ -2,7 +2,6 @@ import Joi from "joi";
 
 const date = new Date(),
     year = date.getFullYear();
-console.log(date);
 
 export const creditAccountSchema = Joi.object({
     name: Joi.string().min(3).max(30).required(),
@@ -30,7 +29,6 @@ export const creditAccountSchema = Joi.object({
             "gray",
         )
         .required(),
-    user: Joi.string().required(),
 });
 
 export const updateCreditAccountSchema = Joi.object({
@@ -57,7 +55,6 @@ export const updateCreditAccountSchema = Joi.object({
         "white",
         "gray",
     ),
-    user: Joi.string().required(),
 });
 
 export const debitAccountSchema = Joi.object({
@@ -80,7 +77,6 @@ export const debitAccountSchema = Joi.object({
             "gray",
         )
         .required(),
-    user: Joi.string().required(),
 });
 
 export const updateDebitAccountSchema = Joi.object({
@@ -101,7 +97,6 @@ export const updateDebitAccountSchema = Joi.object({
         "white",
         "gray",
     ),
-    user: Joi.string().required(),
 });
 
 export const creditDebitAccountSchema = Joi.object({
@@ -131,7 +126,6 @@ export const creditDebitAccountSchema = Joi.object({
             "gray",
         )
         .required(),
-    user: Joi.string().required(),
 });
 
 export const updateCreditDebitAccountSchema = Joi.object({
@@ -156,5 +150,4 @@ export const updateCreditDebitAccountSchema = Joi.object({
         "white",
         "gray",
     ),
-    user: Joi.string().required(),
 });

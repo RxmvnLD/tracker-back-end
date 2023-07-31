@@ -3,8 +3,8 @@ import { IBankAccount } from "../interfaces/IBankAccount";
 import { BankAccType } from "../types";
 import User from "../models/User.model";
 
-const createBankAccount = async (data: IBankAccount) => {
-    const user = await User.findById(data.user);
+const createBankAccount = async (id: string, data: IBankAccount) => {
+    const user = await User.findById(id);
     const bankAcc = new BankAccount(data);
     const savedAcc = await bankAcc.save();
     checkDaysBetweenDates(
@@ -76,8 +76,6 @@ const bankAccountService = {
 };
 
 function checkDaysBetweenDates(date1: Date, date2: Date) {
-    console.log(date1, date2);
-
     const oneDay = 1000 * 60 * 60 * 24;
     const cuttOffDay = date1.getTime();
     const paydayLimit = date2.getTime();

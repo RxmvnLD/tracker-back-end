@@ -17,6 +17,11 @@ const userSchema: Schema<IUser> = new Schema(
             type: String,
             required: true,
         },
+        isAdmin: {
+            type: Boolean,
+            default: false,
+            required: false,
+        },
         bankAccounts: {
             type: [
                 {
