@@ -32,6 +32,8 @@ export const createBankAccount = async (req: Request, res: Response) => {
         }
         return res.status(201).json(bankAcc);
     } catch (error) {
+        if (error instanceof Error)
+            return res.status(400).json({ message: error.message });
         return res.status(400).json(error);
     }
 };
@@ -84,6 +86,8 @@ export const updateBankAccount = async (req: Request, res: Response) => {
         }
         return res.status(200).json(updateBankAccount);
     } catch (error) {
+        if (error instanceof Error)
+            return res.status(400).json({ message: error.message });
         return res.status(400).json(error);
     }
 };
