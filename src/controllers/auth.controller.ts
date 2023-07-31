@@ -9,7 +9,7 @@ import {
 } from "../utils/validations/authValidations";
 
 export const signup = async (req: Request, res: Response) => {
-    const { username, email, password, confirmPassword } = req.body;
+    const { username, email, password, confirmPassword, isAdmin } = req.body;
 
     //Validate fields
     if (!confirmPassword)
@@ -29,6 +29,7 @@ export const signup = async (req: Request, res: Response) => {
             username,
             email,
             password: await hash(password, 12),
+            isAdmin: isAdmin || false,
         });
         //Save user in the database
         const savedUser = await newUser.save();
@@ -36,7 +37,10 @@ export const signup = async (req: Request, res: Response) => {
             return res.status(404).json({ message: "ERROR CREATING USER" });
         }
         //Create token
-        const token = await createToken({ id: savedUser._id });
+        const tokenData = savedUser.isAdmin
+            ? { id: savedUser._id, isAdmin: true }
+            : { id: savedUser._id, isAdmin: false };
+        const token = await createToken(tokenData);
         //Save token as a cookie
         res.cookie("token", token, { httpOnly: true });
         const responseBody = {
@@ -46,6 +50,7 @@ export const signup = async (req: Request, res: Response) => {
                 email: savedUser.email,
                 id: savedUser._id,
                 createdAt: savedUser.createdAt,
+                isAdmin: savedUser.isAdmin,
             },
         };
         //Send response
@@ -83,7 +88,10 @@ export const login = async (req: Request, res: Response) => {
             return res.status(401).json({ message: "Invalid password" });
 
         //Create token
-        const token = await createToken({ id: existingUser._id });
+        const tokenData = existingUser.isAdmin
+            ? { id: existingUser._id, isAdmin: true }
+            : { id: existingUser._id, isAdmin: false };
+        const token = await createToken(tokenData);
         //Save token as a cookie
         res.cookie("token", token, { httpOnly: true });
         const responseBody = {

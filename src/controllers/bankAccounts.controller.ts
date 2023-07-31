@@ -24,7 +24,11 @@ export const createBankAccount = async (req: Request, res: Response) => {
     }
 
     try {
-        const bankAcc = await bankAccountService.createBankAccount(req.body);
+        const id = req.user?.id as string;
+        const bankAcc = await bankAccountService.createBankAccount(
+            id,
+            req.body,
+        );
         if (!bankAcc) {
             return res
                 .status(404)
@@ -38,6 +42,20 @@ export const createBankAccount = async (req: Request, res: Response) => {
     }
 };
 
+export const getBankAccounts = async (req: Request, res: Response) => {
+    const isAdmin = req.user?.isAdmin as boolean;
+    if (!isAdmin)
+        return res
+            .status(401)
+            .json({ message: "Route not allowed, unauthorized user" });
+    try {
+        const bankAccs = await bankAccountService.getBankAccounts();
+        return res.status(200).json(bankAccs);
+    } catch (error) {
+        return res.status(400).json(error);
+    }
+};
+
 export const getBankAccount = async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
@@ -46,15 +64,6 @@ export const getBankAccount = async (req: Request, res: Response) => {
             return res.status(404).json({ message: "Bank account not found" });
         }
         return res.status(200).json(bankAcc);
-    } catch (error) {
-        return res.status(400).json(error);
-    }
-};
-
-export const getBankAccounts = async (_req: Request, res: Response) => {
-    try {
-        const bankAccs = await bankAccountService.getBankAccounts();
-        return res.status(200).json(bankAccs);
     } catch (error) {
         return res.status(400).json(error);
     }

@@ -30,6 +30,22 @@ export const createTransaction = async (req: Request, res: Response) => {
     }
 };
 
+export const getTransactions = async (req: Request, res: Response) => {
+    const isAdmin = req.user?.isAdmin as boolean;
+    if (!isAdmin)
+        return res
+            .status(401)
+            .json({ message: "Route not allowed, unauthorized user" });
+    try {
+        const transactions = await transactionService.getTransactions();
+        if (!transactions)
+            return res.status(404).json({ message: "Transactions not found" });
+        return res.status(200).json(transactions);
+    } catch (error) {
+        return res.status(400).json(error);
+    }
+};
+
 export const getTransaction = async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
@@ -63,16 +79,7 @@ export const updateTransaction = async (req: Request, res: Response) => {
         return res.status(400).json(error);
     }
 };
-export const getTransactions = async (_req: Request, res: Response) => {
-    try {
-        const transactions = await transactionService.getTransactions();
-        if (!transactions)
-            return res.status(404).json({ message: "Transactions not found" });
-        return res.status(200).json(transactions);
-    } catch (error) {
-        return res.status(400).json(error);
-    }
-};
+
 export const deleteTransaction = async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
