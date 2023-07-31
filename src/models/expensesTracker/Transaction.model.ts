@@ -16,6 +16,11 @@ const transactionSchema: Schema<ITransaction> = new Schema(
             type: Number,
             required: true,
         },
+        accountToCharge: {
+            type: String,
+            enum: ["credit", "debit"],
+            required: true,
+        },
         bankAccount: {
             type: Schema.Types.ObjectId,
             ref: "BankAccount",

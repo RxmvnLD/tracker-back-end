@@ -23,6 +23,9 @@ export const createTransaction = async (req: Request, res: Response) => {
                 .json({ message: "ERROR CREATING TRANSACTION" });
         return res.status(201).json(transaction);
     } catch (error) {
+        if (error instanceof Error) {
+            return res.status(400).json({ message: error.message });
+        }
         return res.status(400).json(error);
     }
 };
