@@ -7,6 +7,58 @@ import {
     loginSchema,
     signupSchema,
 } from "../utils/validations/authValidations";
+
+export const signup = async (req: Request, res: Response) => {
+    const { username, email, password, confirmPassword } = req.body;
+
+    //Validate fields
+    if (!confirmPassword)
+        return res
+            .status(422)
+            .json({ message: "Please send the password confirmation." });
+    try {
+        await signupSchema.validateAsync(req.body, { warnings: true });
+    } catch (error: any) {
+        const errorMsj = error.details[0].message;
+        return res.status(400).json({ message: errorMsj });
+    }
+
+    try {
+        //Create a new user and encrypt the password
+        const newUser = new User({
+            username,
+            email,
+            password: await hash(password, 12),
+        });
+        //Save user in the database
+        const savedUser = await newUser.save();
+        if (!savedUser) {
+            return res.status(404).json({ message: "ERROR CREATING USER" });
+        }
+        //Create token
+        const token = await createToken({ id: savedUser._id });
+        //Save token as a cookie
+        res.cookie("token", token, { httpOnly: true });
+        const responseBody = {
+            message: "User created successfully",
+            savedUser: {
+                username: savedUser.username,
+                email: savedUser.email,
+                id: savedUser._id,
+                createdAt: savedUser.createdAt,
+            },
+        };
+        //Send response
+        return res.status(201).json(responseBody);
+    } catch (error) {
+        //Validate duplicated email
+        if (error instanceof MongoServerError && error.code === 11000) {
+            return res.status(409).json({ message: "Email already exists" });
+        }
+        return res.status(400).json({ error });
+    }
+};
+
 export const login = async (req: Request, res: Response) => {
     const { email, password } = req.body;
     //Validate fields
@@ -41,54 +93,6 @@ export const login = async (req: Request, res: Response) => {
                 email: existingUser.email,
                 id: existingUser._id,
                 createdAt: existingUser.createdAt,
-            },
-        };
-        //Send response
-        return res.status(201).json(responseBody);
-    } catch (error) {
-        //Validate duplicated email
-        if (error instanceof MongoServerError && error.code === 11000) {
-            return res.status(409).json({ message: "Email already exists" });
-        }
-        return res.status(400).json({ error });
-    }
-};
-
-export const signup = async (req: Request, res: Response) => {
-    const { username, email, password, confirmPassword } = req.body;
-
-    //Validate fields
-    if (!confirmPassword)
-        return res
-            .status(422)
-            .json({ message: "Please send the password confirmation." });
-    try {
-        await signupSchema.validateAsync(req.body, { warnings: true });
-    } catch (error: any) {
-        const errorMsj = error.details[0].message;
-        return res.status(400).json({ message: errorMsj });
-    }
-
-    try {
-        //Create a new user and encrypt the password
-        const newUser = new User({
-            username,
-            email,
-            password: await hash(password, 12),
-        });
-        //Save user in the database
-        const savedUser = await newUser.save();
-        //Create token
-        const token = await createToken({ id: savedUser._id });
-        //Save token as a cookie
-        res.cookie("token", token, { httpOnly: true });
-        const responseBody = {
-            message: "User created successfully",
-            savedUser: {
-                username: savedUser.username,
-                email: savedUser.email,
-                id: savedUser._id,
-                createdAt: savedUser.createdAt,
             },
         };
         //Send response

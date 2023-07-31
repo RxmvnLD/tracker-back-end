@@ -6,7 +6,7 @@ export const getUser = async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
         const user = await userService.getUser(id);
-        if (!user) throw new Error("User not found");
+        if (!user) return res.status(404).json({ message: "User not found" });
         return res.status(200).json(user);
     } catch (error) {
         return res.status(400).json(error);
@@ -16,6 +16,7 @@ export const getUser = async (req: Request, res: Response) => {
 export const getUsers = async (_req: Request, res: Response) => {
     try {
         const users = await userService.getUsers();
+        if (!users) return res.status(404).json({ message: "Users not found" });
         return res.status(200).json(users);
     } catch (error) {
         return res.status(400).json(error);
@@ -35,6 +36,8 @@ export const updateUser = async (req: Request, res: Response) => {
         const { id } = req.params,
             newData = req.body,
             updateUser = await userService.updateUser(id, newData);
+        if (!updateUser)
+            return res.status(404).json({ message: "User not found" });
         return res.status(200).json(updateUser);
     } catch (error) {
         return res.status(400).json(error);
@@ -44,7 +47,8 @@ export const updateUser = async (req: Request, res: Response) => {
 export const deleteUser = async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
-        await userService.deleteUser(id);
+        const user = await userService.deleteUser(id);
+        if (!user) return res.status(404).json({ message: "User not found" });
         return res.status(200).json({ message: "User deleted" });
     } catch (error) {
         return res.status(400).json(error);
