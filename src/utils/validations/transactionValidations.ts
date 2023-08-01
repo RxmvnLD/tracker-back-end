@@ -13,5 +13,4 @@ export const updateTransactionSchema = Joi.object({
     type: Joi.string().valid("income", "expense"),
     amount: Joi.number().min(0),
     accountToCharge: Joi.string().valid("credit", "debit"),
-    bankAccount: Joi.string().required(),
 });

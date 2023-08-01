@@ -52,6 +52,8 @@ export const getBankAccounts = async (req: Request, res: Response) => {
         const bankAccs = await bankAccountService.getBankAccounts();
         return res.status(200).json(bankAccs);
     } catch (error) {
+        if (error instanceof Error)
+            return res.status(400).json({ message: error.message });
         return res.status(400).json(error);
     }
 };
@@ -65,6 +67,8 @@ export const getBankAccount = async (req: Request, res: Response) => {
         }
         return res.status(200).json(bankAcc);
     } catch (error) {
+        if (error instanceof Error)
+            return res.status(400).json({ message: error.message });
         return res.status(400).json(error);
     }
 };
@@ -110,6 +114,8 @@ export const deleteBankAccount = async (req: Request, res: Response) => {
         }
         return res.status(200).json({ message: "Bank account deleted" });
     } catch (error) {
+        if (error instanceof Error)
+            return res.status(400).json({ message: error.message });
         return res.status(400).json(error);
     }
 };
