@@ -3,6 +3,7 @@ import { hash } from "bcryptjs";
 import BankAccountModel from "../models/expensesTracker/BankAccount.model";
 const getUser = async (id: String) => {
     const user = await User.findById(id);
+    if (!user) throw new Error("User not found");
     if ((user?.bankAccounts.length as number) > 0) {
         await user?.populate({ path: "bankAccounts", model: BankAccountModel });
     }
@@ -32,11 +33,13 @@ const updateUser = async (id: string, newData: newUserDataInterface) => {
     let user = await User.findByIdAndUpdate(id, newData, {
         new: true,
     });
+    if (!user) throw new Error("User not found");
     return user;
 };
 
 const deleteUser = async (id: String) => {
     const user = await User.findByIdAndDelete(id);
+    if (!user) throw new Error("User not found");
     return user;
 };
 

@@ -6,6 +6,7 @@ import BankAccount from "../models/expensesTracker/BankAccount.model";
 const createTransaction = async (data: ITransaction) => {
     //Get the bank account to update
     const bankAcc = await BankAccount.findById(data.bankAccount);
+    if (!bankAcc) throw new Error("Bank account not found");
     //Validations
     newTransactionValidations(bankAcc, data);
     //Create the transaction and save it on the DB

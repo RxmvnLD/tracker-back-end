@@ -21,6 +21,7 @@ const getBankAccounts = async () => {
 };
 const getBankAccount = async (id: String) => {
     const bankAcc = await BankAccount.findById(id);
+    if (!bankAcc) throw new Error("Bank account not found");
     return bankAcc;
 };
 
@@ -39,6 +40,7 @@ const updateBankAccount = async (
     newData: updatedBankAccInterface,
 ) => {
     const bankAcc = await BankAccount.findById(id);
+    if (!bankAcc) throw new Error("Bank account not found");
 
     if (newData.cuttOffDay && newData.paydayLimit) {
         const cuttOffDay = new Date(newData.cuttOffDay),
@@ -64,6 +66,7 @@ const updateBankAccount = async (
 
 const deleteBankAccount = async (id: String) => {
     const bankAcc = await BankAccount.findByIdAndDelete(id);
+    if (!bankAcc) throw new Error("Bank account not found");
     return bankAcc;
 };
 

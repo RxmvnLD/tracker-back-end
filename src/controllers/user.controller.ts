@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import userService from "../services/user.services";
-import { updateUserSchema } from "../utils/validations/userValidations";
 
 export const getUser = async (req: Request, res: Response) => {
     try {
@@ -8,6 +7,8 @@ export const getUser = async (req: Request, res: Response) => {
         if (!user) return res.status(404).json({ message: "User not found" });
         return res.status(200).json(user);
     } catch (error) {
+        if (error instanceof Error)
+            return res.status(400).json({ message: error.message });
         return res.status(400).json(error);
     }
 };
@@ -28,14 +29,6 @@ export const getUsers = async (req: Request, res: Response) => {
 };
 
 export const updateUser = async (req: Request, res: Response) => {
-    //Validate data
-    try {
-        await updateUserSchema.validateAsync(req.body);
-    } catch (error: any) {
-        const errorMsj = error.details[0].message;
-        return res.status(400).json({ message: errorMsj });
-    }
-    //Call the service
     try {
         const id = req.user?.id as string,
             newData = req.body,
@@ -44,6 +37,8 @@ export const updateUser = async (req: Request, res: Response) => {
             return res.status(404).json({ message: "User not found" });
         return res.status(200).json(updateUser);
     } catch (error) {
+        if (error instanceof Error)
+            return res.status(400).json({ message: error.message });
         return res.status(400).json(error);
     }
 };
@@ -55,6 +50,8 @@ export const deleteUser = async (req: Request, res: Response) => {
         if (!user) return res.status(404).json({ message: "User not found" });
         return res.status(200).json({ message: "User deleted" });
     } catch (error) {
+        if (error instanceof Error)
+            return res.status(400).json({ message: error.message });
         return res.status(400).json(error);
     }
 };
