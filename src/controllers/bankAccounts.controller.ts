@@ -57,6 +57,22 @@ export const getBankAccounts = async (req: Request, res: Response) => {
         return res.status(400).json(error);
     }
 };
+export const getUserBankAccounts = async (req: Request, res: Response) => {
+    try {
+        const id = req.user?.id as string;
+        const bankAccs = await bankAccountService.getUserBankAccounts(id);
+        if (!bankAccs) {
+            return res
+                .status(404)
+                .json({ message: "ERROR GETTING BANK ACCOUNTS" });
+        }
+        return res.status(201).json(bankAccs);
+    } catch (error) {
+        if (error instanceof Error)
+            return res.status(400).json({ message: error.message });
+        return res.status(400).json(error);
+    }
+};
 
 export const getBankAccount = async (req: Request, res: Response) => {
     try {

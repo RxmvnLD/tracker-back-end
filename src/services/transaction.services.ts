@@ -69,14 +69,6 @@ const deleteTransaction = async (id: String) => {
     return transaction;
 };
 
-const transactionService = {
-    createTransaction,
-    getTransactions,
-    getTransaction,
-    updateTransaction,
-    deleteTransaction,
-};
-
 function newTransactionValidations(bankAcc: any, data: ITransaction) {
     if (bankAcc.type === "debit" && data.accountToCharge === "credit") {
         throw new Error(
@@ -124,4 +116,12 @@ function newTransactionValidations(bankAcc: any, data: ITransaction) {
         }
     }
 }
+
+const transactionService = {
+    createTransaction,
+    getTransactions,
+    getTransaction,
+    updateTransaction,
+    deleteTransaction,
+};
 export default transactionService;

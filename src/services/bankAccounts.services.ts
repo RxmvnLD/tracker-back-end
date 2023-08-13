@@ -2,6 +2,7 @@ import BankAccount from "../models/expensesTracker/BankAccount.model";
 import { IBankAccount } from "../interfaces/IBankAccount";
 import { BankAccType } from "../types";
 import User from "../models/User.model";
+import BankAccountModel from "../models/expensesTracker/BankAccount.model";
 
 const createBankAccount = async (id: string, data: IBankAccount) => {
     const user = await User.findById(id);
@@ -18,6 +19,14 @@ const createBankAccount = async (id: string, data: IBankAccount) => {
 const getBankAccounts = async () => {
     const bankAcc = await BankAccount.find();
     return bankAcc;
+};
+const getUserBankAccounts = async (id: string) => {
+    const user = await User.findById(id);
+    if (!user) throw new Error("User not found");
+    if ((user?.bankAccounts.length as number) > 0) {
+        await user?.populate({ path: "bankAccounts", model: BankAccountModel });
+    }
+    return user.bankAccounts;
 };
 const getBankAccount = async (id: String) => {
     const bankAcc = await BankAccount.findById(id);
@@ -73,6 +82,7 @@ const deleteBankAccount = async (id: String) => {
 const bankAccountService = {
     createBankAccount,
     getBankAccounts,
+    getUserBankAccounts,
     getBankAccount,
     updateBankAccount,
     deleteBankAccount,

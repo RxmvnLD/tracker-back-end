@@ -42,15 +42,19 @@ export const signup = async (req: Request, res: Response) => {
             : { id: savedUser._id, isAdmin: false };
         const token = await createToken(tokenData);
         //Save token as a cookie
-        res.cookie("token", token, { httpOnly: true });
+        res.cookie("token", token, {
+            expires: new Date(Date.now() + 3_600_000 * 24),
+            httpOnly: true,
+            sameSite: "none",
+            secure: true,
+        });
         const responseBody = {
             message: "User created successfully",
-            savedUser: {
+            user: {
                 username: savedUser.username,
                 email: savedUser.email,
                 id: savedUser._id,
-                createdAt: savedUser.createdAt,
-                isAdmin: savedUser.isAdmin,
+                token,
             },
         };
         //Send response
@@ -93,14 +97,19 @@ export const login = async (req: Request, res: Response) => {
             : { id: existingUser._id, isAdmin: false };
         const token = await createToken(tokenData);
         //Save token as a cookie
-        res.cookie("token", token, { httpOnly: true });
+        res.cookie("token", token, {
+            expires: new Date(Date.now() + 3_600_000 * 24),
+            httpOnly: true,
+            secure: true,
+            sameSite: "none",
+        });
         const responseBody = {
             message: "User logged successfully",
-            loggedUser: {
+            user: {
                 username: existingUser.username,
                 email: existingUser.email,
                 id: existingUser._id,
-                createdAt: existingUser.createdAt,
+                token,
             },
         };
         //Send response
