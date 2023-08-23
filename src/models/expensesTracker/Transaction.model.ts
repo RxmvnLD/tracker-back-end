@@ -25,6 +25,10 @@ const transactionSchema: Schema<ITransaction> = new Schema(
             type: Schema.Types.ObjectId,
             ref: "BankAccount",
         },
+        user: {
+            type: Schema.Types.ObjectId,
+            ref: "User",
+        },
     },
     { timestamps: true },
 );

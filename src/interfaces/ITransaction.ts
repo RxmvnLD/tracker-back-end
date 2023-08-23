@@ -8,6 +8,7 @@ export interface ITransaction extends Document {
     //If the bank acc it's credit and debit, the user can choose which account to charge
     accountToCharge?: TransactionAccount;
     bankAccount: Schema.Types.ObjectId;
+    user: Schema.Types.ObjectId;
 }
 
 export interface ITransactionModel extends Model<ITransaction> {}

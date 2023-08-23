@@ -9,7 +9,7 @@ const bankAccountSchema: Schema<IBankAccount> = new Schema(
         },
         type: {
             type: String,
-            enum: ["credit", "debit", "both"],
+            enum: ["credit", "debit", "dual"],
         },
         balance: {
             type: Number,

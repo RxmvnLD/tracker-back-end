@@ -16,7 +16,7 @@ export const createBankAccount = async (req: Request, res: Response) => {
         if (type === "credit")
             await creditAccountSchema.validateAsync(req.body);
         if (type === "debit") await debitAccountSchema.validateAsync(req.body);
-        if (type === "both")
+        if (type === "dual")
             await creditDebitAccountSchema.validateAsync(req.body);
     } catch (error: any) {
         const errorMsj = error.details[0].message;
@@ -57,6 +57,22 @@ export const getBankAccounts = async (req: Request, res: Response) => {
         return res.status(400).json(error);
     }
 };
+export const getUserBankAccounts = async (req: Request, res: Response) => {
+    try {
+        const id = req.user?.id as string;
+        const bankAccs = await bankAccountService.getUserBankAccounts(id);
+        if (!bankAccs) {
+            return res
+                .status(404)
+                .json({ message: "ERROR GETTING BANK ACCOUNTS" });
+        }
+        return res.status(201).json(bankAccs);
+    } catch (error) {
+        if (error instanceof Error)
+            return res.status(400).json({ message: error.message });
+        return res.status(400).json(error);
+    }
+};
 
 export const getBankAccount = async (req: Request, res: Response) => {
     try {
@@ -80,7 +96,7 @@ export const updateBankAccount = async (req: Request, res: Response) => {
             await updateCreditAccountSchema.validateAsync(req.body);
         if (type === "debit")
             await updateDebitAccountSchema.validateAsync(req.body);
-        if (type === "both")
+        if (type === "dual")
             await updateCreditDebitAccountSchema.validateAsync(req.body);
     } catch (error: any) {
         console.log(error);

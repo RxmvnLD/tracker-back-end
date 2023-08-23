@@ -5,7 +5,7 @@ const date = new Date(),
 
 export const creditAccountSchema = Joi.object({
     name: Joi.string().min(3).max(30).required(),
-    type: Joi.string().valid("credit", "debit", "both").required(),
+    type: Joi.string().valid("credit", "debit", "dual").required(),
     totalCredit: Joi.number().greater(0).required(),
     availableCredit: Joi.number()
         .greater(0)
@@ -33,7 +33,7 @@ export const creditAccountSchema = Joi.object({
 
 export const updateCreditAccountSchema = Joi.object({
     name: Joi.string().min(3).max(30),
-    type: Joi.string().valid("credit", "debit", "both"),
+    type: Joi.string().valid("credit", "debit", "dual"),
     totalCredit: Joi.number().greater(0).required(),
     availableCredit: Joi.number()
         .greater(0)
@@ -59,7 +59,7 @@ export const updateCreditAccountSchema = Joi.object({
 
 export const debitAccountSchema = Joi.object({
     name: Joi.string().min(3).max(30).required(),
-    type: Joi.string().valid("credit", "debit", "both").required(),
+    type: Joi.string().valid("credit", "debit", "dual").required(),
     balance: Joi.number().required(),
     color: Joi.string()
         .valid(
@@ -81,7 +81,7 @@ export const debitAccountSchema = Joi.object({
 
 export const updateDebitAccountSchema = Joi.object({
     name: Joi.string().min(3).max(30),
-    type: Joi.string().valid("credit", "debit", "both"),
+    type: Joi.string().valid("credit", "debit", "dual"),
     balance: Joi.number(),
     color: Joi.string().valid(
         "red",
@@ -101,7 +101,7 @@ export const updateDebitAccountSchema = Joi.object({
 
 export const creditDebitAccountSchema = Joi.object({
     name: Joi.string().min(3).max(30).required(),
-    type: Joi.string().valid("credit", "debit", "both").required(),
+    type: Joi.string().valid("credit", "debit", "dual").required(),
     balance: Joi.number().required(),
     totalCredit: Joi.number().greater(0).required(),
     availableCredit: Joi.number()
@@ -130,7 +130,7 @@ export const creditDebitAccountSchema = Joi.object({
 
 export const updateCreditDebitAccountSchema = Joi.object({
     name: Joi.string().min(3).max(30),
-    type: Joi.string().valid("credit", "debit", "both"),
+    type: Joi.string().valid("credit", "debit", "dual"),
     balance: Joi.number(),
     totalCredit: Joi.number().greater(0),
     availableCredit: Joi.number().greater(0).less(Joi.ref("totalCredit")),

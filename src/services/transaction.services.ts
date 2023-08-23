@@ -10,7 +10,7 @@ const createTransaction = async (data: ITransaction) => {
     //Validations
     newTransactionValidations(bankAcc, data);
     //Create the transaction and save it on the DB
-    const transaction = new Transaction(data);
+    const transaction = new Transaction({ ...data, user: bankAcc.user });
     const savedTransaction = await transaction.save();
     //Update the bank account transactions
     if (savedTransaction.type === "income") {
@@ -69,14 +69,6 @@ const deleteTransaction = async (id: String) => {
     return transaction;
 };
 
-const transactionService = {
-    createTransaction,
-    getTransactions,
-    getTransaction,
-    updateTransaction,
-    deleteTransaction,
-};
-
 function newTransactionValidations(bankAcc: any, data: ITransaction) {
     if (bankAcc.type === "debit" && data.accountToCharge === "credit") {
         throw new Error(
@@ -103,7 +95,7 @@ function newTransactionValidations(bankAcc: any, data: ITransaction) {
         throw new Error("You don't have enough credit to do this transaction");
     }
 
-    if (bankAcc.type === "both") {
+    if (bankAcc.type === "dual") {
         if (
             data.type === "expense" &&
             data.accountToCharge === "debit" &&
@@ -124,4 +116,12 @@ function newTransactionValidations(bankAcc: any, data: ITransaction) {
         }
     }
 }
+
+const transactionService = {
+    createTransaction,
+    getTransactions,
+    getTransaction,
+    updateTransaction,
+    deleteTransaction,
+};
 export default transactionService;
