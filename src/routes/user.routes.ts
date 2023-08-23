@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
     getUser,
+    getUserSummary,
     getUsers,
     deleteUser,
     updateUser,
@@ -12,6 +13,7 @@ const router = Router();
 
 router.get("/users/all", getUsers);
 router.get("/users", getUser);
+router.get("/users/summary", getUserSummary);
 router.put("/users", schemaValidator(updateUserSchema), updateUser);
 router.delete("/users", deleteUser);
 

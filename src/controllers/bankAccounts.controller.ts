@@ -16,7 +16,7 @@ export const createBankAccount = async (req: Request, res: Response) => {
         if (type === "credit")
             await creditAccountSchema.validateAsync(req.body);
         if (type === "debit") await debitAccountSchema.validateAsync(req.body);
-        if (type === "both")
+        if (type === "dual")
             await creditDebitAccountSchema.validateAsync(req.body);
     } catch (error: any) {
         const errorMsj = error.details[0].message;
@@ -96,7 +96,7 @@ export const updateBankAccount = async (req: Request, res: Response) => {
             await updateCreditAccountSchema.validateAsync(req.body);
         if (type === "debit")
             await updateDebitAccountSchema.validateAsync(req.body);
-        if (type === "both")
+        if (type === "dual")
             await updateCreditDebitAccountSchema.validateAsync(req.body);
     } catch (error: any) {
         console.log(error);

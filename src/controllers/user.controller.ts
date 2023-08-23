@@ -12,6 +12,17 @@ export const getUser = async (req: Request, res: Response) => {
         return res.status(400).json(error);
     }
 };
+export const getUserSummary = async (req: Request, res: Response) => {
+    try {
+        const user = await userService.getUserSummary(req.user?.id as string);
+        if (!user) return res.status(404).json({ message: "User not found" });
+        return res.status(200).json(user);
+    } catch (error) {
+        if (error instanceof Error)
+            return res.status(400).json({ message: error.message });
+        return res.status(400).json(error);
+    }
+};
 
 export const getUsers = async (req: Request, res: Response) => {
     const isAdmin = req.user?.isAdmin as boolean;

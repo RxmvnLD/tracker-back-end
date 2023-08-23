@@ -42,8 +42,9 @@ export const signup = async (req: Request, res: Response) => {
             : { id: savedUser._id, isAdmin: false };
         const token = await createToken(tokenData);
         //Save token as a cookie
+        const days = process.env.DAYS_TO_EXPIRE_TOKEN as string;
         res.cookie("token", token, {
-            expires: new Date(Date.now() + 3_600_000 * 24),
+            expires: new Date(Date.now() + 3_600_000 * 24 * Number(days)),
             httpOnly: true,
             sameSite: "none",
             secure: true,
@@ -97,8 +98,9 @@ export const login = async (req: Request, res: Response) => {
             : { id: existingUser._id, isAdmin: false };
         const token = await createToken(tokenData);
         //Save token as a cookie
+        const days = process.env.DAYS_TO_EXPIRE_TOKEN as string;
         res.cookie("token", token, {
-            expires: new Date(Date.now() + 3_600_000 * 24),
+            expires: new Date(Date.now() + 3_600_000 * 24 * Number(days)),
             httpOnly: true,
             secure: true,
             sameSite: "none",
@@ -113,7 +115,7 @@ export const login = async (req: Request, res: Response) => {
             },
         };
         //Send response
-        return res.status(201).json(responseBody);
+        return res.status(200).json(responseBody);
     } catch (error) {
         //Validate duplicated email
         if (error instanceof MongoServerError && error.code === 11000) {

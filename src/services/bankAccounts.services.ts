@@ -6,12 +6,13 @@ import BankAccountModel from "../models/expensesTracker/BankAccount.model";
 
 const createBankAccount = async (id: string, data: IBankAccount) => {
     const user = await User.findById(id);
-    const bankAcc = new BankAccount(data);
+    const bankAcc = new BankAccount({ ...data, user: id });
     const savedAcc = await bankAcc.save();
-    checkDaysBetweenDates(
-        savedAcc.cuttOffDay as Date,
-        savedAcc.paydayLimit as Date,
-    );
+    if (savedAcc.type === "dual" || savedAcc.type === "credit")
+        checkDaysBetweenDates(
+            savedAcc.cuttOffDay as Date,
+            savedAcc.paydayLimit as Date,
+        );
     user?.bankAccounts.push(savedAcc.id);
     await user?.save();
     return savedAcc;
