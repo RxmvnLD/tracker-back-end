@@ -5,7 +5,7 @@ const createToken = (payload: object) => {
         sign(
             payload,
             process.env.JWT_SECRET as string,
-            { expiresIn: "1d" },
+            { expiresIn: process.env.JWT_EXPIRES_IN as string },
             (err, token) => {
                 if (err) reject(err);
                 resolve(token);

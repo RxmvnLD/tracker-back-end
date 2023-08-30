@@ -9,10 +9,12 @@ export const authRequired = (
 ) => {
     res.header("Access-Control-Allow-Credentials", "true");
     const { token: cookiesToken } = req.cookies;
+    console.log("cookiesToken", cookiesToken);
 
     // If there isnt a token in the cookies, use the token from the authorization header
     if (!cookiesToken) {
         const bearerToken = req.headers.authorization?.split(" ")[1];
+        console.log("bearerToken", bearerToken);
         if (!bearerToken) {
             return res.status(401).json({ message: "Unauthorized" });
         }
@@ -22,10 +24,14 @@ export const authRequired = (
                 bearerToken,
                 process.env.JWT_SECRET as string,
             );
+            console.log(user);
+
             req.user = user as tokenUserData;
-        } catch (error) {
+        } catch (error: any) {
             console.log(error);
-            return res.status(401).json({ message: "Invalid token" });
+            return res
+                .status(401)
+                .json({ message: "Invalid or expired token" });
         }
         return next();
     }
@@ -33,9 +39,9 @@ export const authRequired = (
     try {
         const user = jwt.verify(cookiesToken, process.env.JWT_SECRET as string);
         req.user = user as tokenUserData;
-    } catch (error) {
-        console.log(error);
-        return res.status(401).json({ message: "Invalid token" });
+    } catch (error: any) {
+        console.log(error.message);
+        return res.status(401).json({ message: "Invalid or expired token" });
     }
     return next();
 };

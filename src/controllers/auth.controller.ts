@@ -7,7 +7,7 @@ import {
     loginSchema,
     signupSchema,
 } from "../utils/validations/authValidations";
-
+import jwt from "jsonwebtoken";
 export const signup = async (req: Request, res: Response) => {
     const { username, email, password, confirmPassword, isAdmin } = req.body;
 
@@ -42,10 +42,9 @@ export const signup = async (req: Request, res: Response) => {
             : { id: savedUser._id, isAdmin: false };
         const token = await createToken(tokenData);
         //Save token as a cookie
-        const days = process.env.DAYS_TO_EXPIRE_TOKEN as string;
+        const days = process.env.DAYS_TO_EXPIRE_COOKIE as string;
         res.cookie("token", token, {
             expires: new Date(Date.now() + 3_600_000 * 24 * Number(days)),
-            httpOnly: true,
             sameSite: "none",
             secure: true,
         });
@@ -98,10 +97,9 @@ export const login = async (req: Request, res: Response) => {
             : { id: existingUser._id, isAdmin: false };
         const token = await createToken(tokenData);
         //Save token as a cookie
-        const days = process.env.DAYS_TO_EXPIRE_TOKEN as string;
+        const days = process.env.DAYS_TO_EXPIRE_COOKIE as string;
         res.cookie("token", token, {
             expires: new Date(Date.now() + 3_600_000 * 24 * Number(days)),
-            httpOnly: true,
             secure: true,
             sameSite: "none",
         });
@@ -128,4 +126,34 @@ export const login = async (req: Request, res: Response) => {
 export const logout = async (_req: Request, res: Response) => {
     res.clearCookie("token");
     return res.json({ message: "User logged out" });
+};
+
+export const verify = async (req: Request, res: Response) => {
+    res.header("Access-Control-Allow-Credentials", "true");
+    const { token: cookiesToken } = req.cookies;
+
+    // If there isnt a token in the cookies, use the token from the authorization header
+    if (!cookiesToken) {
+        const bearerToken = req.headers.authorization?.split(" ")[1];
+        if (!bearerToken) {
+            return res.status(401).json({ message: "Unauthorized" });
+        }
+        try {
+            jwt.verify(bearerToken, process.env.JWT_SECRET as string);
+        } catch (error: any) {
+            console.log(error);
+            res.clearCookie("token");
+            return res
+                .status(401)
+                .json({ message: "Invalid or expired token" });
+        }
+    }
+    try {
+        jwt.verify(cookiesToken, process.env.JWT_SECRET as string);
+    } catch (error: any) {
+        console.log(error.message);
+        res.clearCookie("token");
+        return res.status(401).json({ message: "Invalid or expired token" });
+    }
+    return res.status(200).json({ message: "Valid token" });
 };
