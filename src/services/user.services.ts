@@ -2,6 +2,7 @@ import User from "../models/User.model";
 import { hash } from "bcryptjs";
 import BankAccountModel from "../models/expensesTracker/BankAccount.model";
 import TransactionModel from "../models/expensesTracker/Transaction.model";
+import { BankAccColor } from "../types";
 const getUser = async (id: String) => {
     const user = await User.findById(id);
     if (!user) throw new Error("User not found");
@@ -10,6 +11,20 @@ const getUser = async (id: String) => {
     }
     return user;
 };
+interface userSummary {
+    incomes: number;
+    expenses: number;
+    balance: number;
+    debitAccounts: number;
+    creditAccounts: number;
+    dualAccounts: number;
+    bankAccounts: userBankAccounts[];
+}
+interface userBankAccounts {
+    name: string;
+    balance: number;
+    color: BankAccColor;
+}
 const getUserSummary = async (id: String) => {
     const bankAccounts = await BankAccountModel.find({ user: id });
 
@@ -18,17 +33,37 @@ const getUserSummary = async (id: String) => {
         balance = 0,
         debitAccounts = 0,
         creditAccounts = 0,
-        dualAccounts = 0;
+        dualAccounts = 0,
+        responseAccounts: userBankAccounts[] = [];
 
     for (const account of bankAccounts) {
         balance += account.balance || 0;
-        if (account.type === "debit") {
-            console.log(account);
 
-            debitAccounts++;
-        }
         if (account.type === "credit") creditAccounts++;
-        if (account.type === "dual") dualAccounts++;
+
+        if (account.type === "debit") {
+            debitAccounts++;
+            responseAccounts = [
+                ...responseAccounts,
+                {
+                    name: account.name,
+                    balance: account.balance as number,
+                    color: account.color,
+                },
+            ];
+        }
+
+        if (account.type === "dual") {
+            dualAccounts++;
+            responseAccounts = [
+                ...responseAccounts,
+                {
+                    name: account.name,
+                    balance: account.balance as number,
+                    color: account.color,
+                },
+            ];
+        }
 
         //Sum all incomes
         const incomeTransactions = await TransactionModel.find({
@@ -47,13 +82,14 @@ const getUserSummary = async (id: String) => {
             expenses += transaction.amount;
         }
     }
-    const userSummary = {
+    const userSummary: userSummary = {
         incomes,
         expenses,
         balance,
         debitAccounts,
         creditAccounts,
         dualAccounts,
+        bankAccounts: responseAccounts,
     };
     return userSummary;
 };
