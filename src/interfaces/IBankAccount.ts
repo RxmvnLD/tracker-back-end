@@ -1,5 +1,5 @@
 import { Schema, Document, Model } from "mongoose";
-import { BankAccType } from "../types";
+import { BankAccColor, BankAccType } from "../types";
 
 export interface IBankAccount extends Document {
     name: string;
@@ -12,7 +12,7 @@ export interface IBankAccount extends Document {
     cuttOffDay?: Date;
     paydayLimit?: Date;
     //
-    color: string;
+    color: BankAccColor;
     user: Schema.Types.ObjectId;
     transactions: {
         incomes: Schema.Types.ObjectId[];
