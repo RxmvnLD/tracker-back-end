@@ -2,8 +2,13 @@ import Transaction from "../models/expensesTracker/Transaction.model";
 import { ITransaction } from "../interfaces/ITransaction";
 import { TransactionType } from "../types";
 import BankAccount from "../models/expensesTracker/BankAccount.model";
+import TransactionModel from "../models/expensesTracker/Transaction.model";
+import UserModel from "../models/User.model";
 
-const createTransaction = async (data: ITransaction) => {
+const createTransaction = async (id: string, data: ITransaction) => {
+    //Get the user to update
+    const user = await UserModel.findById(id);
+    if (!user) throw new Error("User not found");
     //Get the bank account to update
     const bankAcc = await BankAccount.findById(data.bankAccount);
     if (!bankAcc) throw new Error("Bank account not found");
@@ -11,6 +16,8 @@ const createTransaction = async (data: ITransaction) => {
     newTransactionValidations(bankAcc, data);
     //Create the transaction and save it on the DB
     const transaction = new Transaction({ ...data, user: bankAcc.user });
+    user?.transactions.push(transaction.id);
+    await user?.save();
     const savedTransaction = await transaction.save();
     //Update the bank account transactions
     if (savedTransaction.type === "income") {
@@ -39,6 +46,14 @@ const createTransaction = async (data: ITransaction) => {
 const getTransactions = async () => {
     const transactions = await Transaction.find();
     return transactions;
+};
+const getUserTransactions = async (id: string) => {
+    const user = await UserModel.findById(id);
+    if (!user) throw new Error("User not found");
+    if ((user?.transactions.length as number) > 0) {
+        await user?.populate({ path: "transactions", model: TransactionModel });
+    }
+    return user.transactions;
 };
 
 const getTransaction = async (id: String) => {
@@ -120,6 +135,7 @@ function newTransactionValidations(bankAcc: any, data: ITransaction) {
 const transactionService = {
     createTransaction,
     getTransactions,
+    getUserTransactions,
     getTransaction,
     updateTransaction,
     deleteTransaction,

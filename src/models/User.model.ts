@@ -30,6 +30,14 @@ const userSchema: Schema<IUser> = new Schema(
                 },
             ],
         },
+        transactions: {
+            type: [
+                {
+                    type: Schema.Types.ObjectId,
+                    ref: "Transaction",
+                },
+            ],
+        },
         betsStatus: {
             totalBets: {
                 type: Number,
