@@ -4,6 +4,7 @@ import {
     deleteTransaction,
     getTransaction,
     getTransactions,
+    getUserTransactions,
     updateTransaction,
 } from "../controllers/transactions.controller";
 import {
@@ -20,6 +21,7 @@ router.post(
     createTransaction,
 );
 router.get("/transactions/all", getTransactions);
+router.get("/transactions/user", getUserTransactions);
 router.get("/transactions/:id", getTransaction);
 router.put(
     "/transactions/:id",

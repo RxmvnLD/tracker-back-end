@@ -3,7 +3,9 @@ import transactionService from "../services/transaction.services";
 
 export const createTransaction = async (req: Request, res: Response) => {
     try {
+        const id = req.user?.id as string;
         const transaction = await transactionService.createTransaction(
+            id,
             req.body,
         );
         if (!transaction)
@@ -31,6 +33,22 @@ export const getTransactions = async (req: Request, res: Response) => {
             return res.status(404).json({ message: "Transactions not found" });
         return res.status(200).json(transactions);
     } catch (error) {
+        return res.status(400).json(error);
+    }
+};
+export const getUserTransactions = async (req: Request, res: Response) => {
+    try {
+        const id = req.user?.id as string;
+        const transactions = await transactionService.getUserTransactions(id);
+        if (!transactions) {
+            return res
+                .status(404)
+                .json({ message: "Error getting transactions" });
+        }
+        return res.status(201).json(transactions);
+    } catch (error) {
+        if (error instanceof Error)
+            return res.status(400).json({ message: error.message });
         return res.status(400).json(error);
     }
 };

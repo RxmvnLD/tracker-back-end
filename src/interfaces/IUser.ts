@@ -6,6 +6,7 @@ export interface IUser extends Document {
     password: string;
     isAdmin: boolean;
     bankAccounts: Schema.Types.ObjectId[];
+    transactions: Schema.Types.ObjectId[];
     betsStatus: {
         totalBets: {
             type: Number;
