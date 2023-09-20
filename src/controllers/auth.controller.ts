@@ -89,7 +89,7 @@ export const login = async (req: Request, res: Response) => {
         //Validate password
         const validPassword = await compare(password, existingUser.password);
         if (!validPassword)
-            return res.status(401).json({ message: "Invalid password" });
+            return res.status(400).json({ message: "Invalid password" });
 
         //Create token
         const tokenData = existingUser.isAdmin
